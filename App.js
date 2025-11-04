@@ -1,7 +1,14 @@
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useEffect, useState } from "react";
-import * as ImagePicker from "expo-image-pikcer";
-import { Alert, View, StyleSheet, TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 export default function CameraGalleryApp() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -16,14 +23,13 @@ export default function CameraGalleryApp() {
   }, []);
 
   const requestGalleryPermission = async () => {
-    const galleryStatus =
-      await ImagePicker.requestMediaLibraryPermissionAsync();
-    setHasGalleryPermission(galleryStatus === "granted");
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    setHasGalleryPermission(status === "granted");
 
-    if (galleryStatus !== "granted") {
+    if (status !== "granted") {
       Alert.alert(
-        "Permiso Denegado",
-        "Se necesita acceso a la galeria del telefono para usar esta funcion"
+        "Permiso denegado",
+        "Se necesita acceso a la galería para usar esta función"
       );
     }
   };
@@ -37,31 +43,27 @@ export default function CameraGalleryApp() {
         setCapturedImage(photo.uri);
         setShowCamera(false);
       } catch (error) {
-        Alert.alert("Error", "No se pudo tomar la foto");
-        console.log(error);
+        Alert.alert("Error", "No se pudo tomar la fotografía");
       }
     }
   };
 
   const pickImageFromGallery = async () => {
     if (!hasGalleryPermission) {
-      Alert.alert("Error", "No tienes permiso para acceder a la galeria");
+      Alert.alert("Error", "No tienes permiso para acceder a la galería");
       return;
     }
-
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 0.8,
       });
-
       if (!result.canceled) {
         setCapturedImage(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert("Error", "No se pudo seleccionar la foto");
-      console.log(error);
+      Alert.alert("Error", "No se pudo abrir la galería");
     }
   };
 
@@ -72,7 +74,7 @@ export default function CameraGalleryApp() {
   if (!permission) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}> Solicitando permisos</Text>
+        <Text style={styles.text}>Solicitando permisos...</Text>
       </View>
     );
   }
@@ -80,9 +82,11 @@ export default function CameraGalleryApp() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}> No se ha concedido acceso a la camara</Text>
+        <Text style={styles.text}>
+          No se concedieron permisos para la cámara
+        </Text>
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
-          <Text style={styles.buttonText}>Solicitar acceso a la camara</Text>
+          <Text style={styles.buttonText}>Solicitar permiso</Text>
         </TouchableOpacity>
       </View>
     );
