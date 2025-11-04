@@ -155,12 +155,11 @@ export default function CameraGalleryApp() {
 }
 
 const styles = StyleSheet.create({
-  // --- Estructura principal ---
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "green",
     padding: 20,
   },
   title: {
@@ -176,7 +175,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // --- Botones ---
   button: {
     backgroundColor: "#007bff",
     paddingVertical: 12,
@@ -195,7 +193,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ff4d4d",
   },
 
-  // --- Cámara ---
   fullScreen: {
     flex: 1,
     backgroundColor: "#000",
@@ -222,7 +219,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderWidth: 4,
-    borderColor: "#fff",
+    borderColor: "green",
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -234,7 +231,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
 
-  // --- Imagen previa ---
   preview: {
     width: 250,
     height: 250,
