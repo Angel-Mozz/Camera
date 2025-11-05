@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
 
 export default function CameraGalleryApp() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -31,6 +32,27 @@ export default function CameraGalleryApp() {
         "Permiso denegado",
         "Se necesita acceso a la galería para usar esta función"
       );
+    }
+  };
+
+  const saveToGallery = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync(true);
+
+      if (status !== "granted") {
+        Alert.alert(
+          "Permiso denegado",
+          "No se concedió permiso para guardar en la galería."
+        );
+        return;
+      }
+
+      const asset = await MediaLibrary.createAssetAsync(capturedImage);
+
+      Alert.alert("Listo", "Imagen guardada en la galería.");
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Error", "No se pudo guardar la imagen.");
     }
   };
 
@@ -143,12 +165,23 @@ export default function CameraGalleryApp() {
       </TouchableOpacity>
 
       {capturedImage && (
-        <TouchableOpacity
-          style={[styles.button, styles.clearButton]}
-          onPress={() => setCapturedImage(null)}
-        >
-          <Text style={styles.buttonText}>🧹 Limpiar imagen</Text>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            style={[styles.button, styles.clearButton]}
+            onPress={() => setCapturedImage(null)}
+          >
+            <Text style={styles.buttonText}>🧹 Limpiar imagen</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.saveButton]}
+            onPress={async () => {
+              await saveToGallery();
+              setCapturedImage(null);
+            }}
+          >
+            <Text style={styles.buttonText}>Guardar Imagen</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -159,14 +192,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "green",
+    backgroundColor: "#75afeeff",
     padding: 20,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#222",
+    color: "white",
   },
   text: {
     fontSize: 16,
@@ -191,6 +224,10 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     backgroundColor: "#ff4d4d",
+  },
+  saveButton: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   fullScreen: {
